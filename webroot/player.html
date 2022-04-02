@@ -1,0 +1,96 @@
+<html>
+<head>
+    <title>Player</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <video onended="newVideo()" id="videoPlayer" width=100% height=100%></video>
+
+    <script>
+        //Grab the default stream URL and start it playing
+        //start the main loop to keep track of new songs when playing the default stream since we use onEnded() to check for new tracks and default stream should never end
+        var hls = new Hls();
+        fetch("/defaultStream")
+        .then((res) => {
+            return res.text();
+        }).then(function(data) {
+            window.defaultStreamURL = data
+            videoPlayer.src = data
+            videoPlayer.play()
+            mainLoop()
+        })
+
+        //Check to see if player is playing the default stream, if it is check for new song in queue
+        async function mainLoop() {
+            if (videoPlayer.src == window.defaultStreamURL) {
+                let response = await fetch("/queue")
+                if (response.ok) {
+                    let jsonRes = await response.json()
+                    //console.log(jsonRes)
+                    if (Object.keys(jsonRes).length > 0)
+                    {
+                        newVideo()
+                    }
+                }
+            }
+            fetch("/getCMD")
+            .then((res) => {
+                return res.text();
+            }).then(function(data) {
+                if (data != 0)
+                {
+                    if (data === "skip"){
+                        newVideo()
+                    }
+                }
+            })
+            setTimeout(mainLoop, 5000)
+        }
+        //Request the next song in the queue, if error fallback to default stream
+        function newVideo() {
+            hls.stopLoad();
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+            fetch("/get")
+            .then((res) => {
+                return res.json();
+            }).then(function(data) {
+                if (data.type == "twitch")
+                {
+                    hls.loadSource(data.videoURL);
+                    hls.attachMedia(videoPlayer);
+                    videoPlayer.play()
+                } else {
+                    videoPlayer.src = data.videoURL
+                    videoPlayer.play()
+                }
+                }).catch((e) => {
+                    console.log(e)
+                    console.log("Default stream")
+                    defaultStream()
+                })
+        }
+        //Yes it is wasteful to replace the default stream variable every time
+        //But this is done so you can reboot the backend server and change the default stream without
+        //Having to interrupt playback
+        function defaultStream() {
+            fetch("/defaultStream")
+                .then((res) => {
+                    return res.text();
+                }).then(function(data) {
+                    videoPlayer.src=data
+                    videoPlayer.play()
+                    window.defaultStreamURL = data
+                })
+        }
+
+    </script>
+</html>
