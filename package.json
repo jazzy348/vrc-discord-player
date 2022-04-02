@@ -1,0 +1,33 @@
+{
+  "name": "vrc-dms",
+  "version": "1.0.0",
+  "description": "A Discord bot to be used with OBS to stream YouTube videos across a streaming network",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jazzy348/vrc-discord-player.git"
+  },
+  "keywords": [
+    "vrcdn",
+    "dms",
+    "discord",
+    "music",
+    "youtube"
+  ],
+  "author": "Jazzy Senpai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jazzy348/vrcdn-dms/issues"
+  },
+  "homepage": "https://github.com/jazzy348/vrcdn-dms#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^13.0.1",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "youtube-dl-exec": "^2.0.8"
+  }
+}

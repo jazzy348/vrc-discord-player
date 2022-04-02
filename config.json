@@ -1,0 +1,7 @@
+{
+	"discordToken": "Discord-Bot-Token",
+	"defaultStream" : "https://stream.vrcdn.live/live/vrcdn.live.mp4",
+	"YtToken" : "YouTube-Search-API-Token",
+	"port" : 3000,
+	"prefix" : "!"
+}
